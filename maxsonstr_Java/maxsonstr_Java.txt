@@ -1,0 +1,167 @@
+package cn.whj.game;
+
+import java.util.Scanner;
+
+public class  Test{
+
+	static int[][] d; // d[i][j]记录a[i]和b[j]的最长公共子序列长度，初始化为0
+
+	static int[][] re; 
+
+	static int len = 0; // 子字符串的长度
+
+	static int count = 0; // 用于保存最长公共子字符串的个数
+
+	static int[] result; // 用于暂时保存结果
+
+	static int[] a;
+
+	static int[] b;
+
+	public static void main(String[] args) {
+
+		Scanner in = new Scanner(System.in);
+
+		int n1 = in.nextInt();
+
+		int n2 = in.nextInt();
+
+		a = new int[n1 + 1];
+
+		b = new int[n2 + 1];
+
+		for (int i = 1; i < a.length; i++) {
+
+			a[i] = in.nextInt();
+
+		}
+
+		for (int i = 1; i < b.length; i++) {
+
+			b[i] = in.nextInt();
+
+		}
+
+		result = new int[n1 + 1];
+
+		d = new int[a.length][b.length];
+
+		re = new int[a.length][b.length];
+
+		
+
+		len = dp(a, b);
+
+		System.out.println("the length :" + len);
+
+		prt(a.length - 1, b.length - 1, len);
+
+		System.out.println("共有：" + count + "种");
+
+		in.close();
+
+	}
+
+	public static int dp(int[] a, int[] b) {
+
+		// initial
+
+		for (int i = 0; i < a.length; i++) {
+
+			d[i][0] = 0;
+
+		}
+
+		for (int i = 0; i < b.length; i++) {
+
+			d[0][i] = 0;
+
+		}
+
+		for (int i = 1; i < a.length; i++) {
+
+			for (int j = 1; j < b.length; j++) {
+
+				if (a[i] == b[j]){
+
+					d[i][j] = d[i - 1][j - 1] + 1;
+
+					re[i][j] = 0;
+
+				}
+
+				else if (d[i][j - 1] < d[i - 1][j]){
+
+					d[i][j] = d[i - 1][j];
+
+					re[i][j] = 1; // 上方向
+
+				}
+
+				else if (d[i][j - 1] > d[i - 1][j]) { 
+
+					d[i][j] = d[i][j - 1];
+
+					re[i][j] = -1; // 左方向
+
+				} else {
+
+					d[i][j] = d[i][j - 1];
+
+					re[i][j] = 2;  
+
+				}
+
+			}
+
+		}
+
+		return d[a.length - 1][b.length - 1];
+
+	}
+
+	public static void prt(int i, int j, int current_len) {
+
+		if (i == 0 || j == 0) {
+
+			for (int s = 0; s < len; s++) {
+
+				System.out.print(result[s] + " ");
+
+			}
+
+			System.out.println();
+
+			count++;
+
+			return;
+
+		}
+
+		if (re[i][j] == 0) {
+
+			current_len--;
+
+			result[current_len] = a[i];
+
+			prt(i - 1, j - 1, current_len);
+
+		} else if (re[i][j] == 1) {
+
+			prt(i - 1, j, current_len);
+
+		} else if (re[i][j] == -1) {
+
+				prt(i, j - 1, current_len);
+
+		} else {
+
+			prt(i - 1, j, current_len);
+
+			prt(i, j - 1, current_len);
+
+		}
+
+	}
+
+}
